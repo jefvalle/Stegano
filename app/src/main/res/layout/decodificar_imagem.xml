@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent" >
+    <!--android:background="@drawable/background"-->
+
+
+    <RelativeLayout android:layout_height="fill_parent"
+        android:layout_width="wrap_content"
+
+        android:padding="10.0dip">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:id="@+id/decodificar_imagem"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="67dp"
+            android:src="@mipmap/search_148820" />
+        <!--android:background="@color/semi_transparent"-->
+
+    </RelativeLayout>
+
+    <LinearLayout android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:padding="10.0dip"
+
+        android:layout_alignParentBottom="true">
+
+        <Button android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:id="@+id/botao_galeria_decod"
+            android:textColor="@android:color/black"
+            android:layout_weight="1.0"
+            android:text="@string/buscar"
+            android:layout_marginRight="4.0dip"
+            android:textStyle="bold"/>
+        <!--android:drawableLeft="@drawable/ic_copy_disabled"-->
+
+        <Button android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:id="@+id/button_decodificar"
+            android:textColor="@android:color/black"
+            android:layout_weight="1.0"
+            android:text="@string/decodificar"
+            android:textStyle="bold"
+            android:layout_marginLeft="4.0dip"/>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:id="@+id/imagem_codificar"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="67dp"
+        android:src="@mipmap/search_148820" />
+
+    <Button android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:id="@+id/botao_galeria_codificar"
+        android:textColor="@android:color/black"
+        android:layout_weight="1.0"
+        android:text="@string/Procurar"
+        android:textStyle="bold"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+
+        android:layout_marginBottom="46dp" />
+
+
+</RelativeLayout>

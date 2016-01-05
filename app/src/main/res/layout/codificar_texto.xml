@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent" >
+    <!--android:background="@drawable/background"-->
+
+
+    <RelativeLayout android:layout_height="fill_parent"
+        android:layout_width="wrap_content"
+        android:padding="10.0dip"
+        android:layout_above="@+id/linearLayout_2">
+
+        <EditText android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:inputType="textMultiLine"
+            android:cursorVisible="true"
+            android:clickable="true"
+            android:scrollbars="vertical"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            android:paddingRight="4.0dip"
+            android:paddingTop="4.0dip"
+            android:paddingLeft="10.0dip"
+            android:id="@+id/editText_texto"
+            android:gravity="top|left|center"
+            android:textColor="@android:color/black"
+            android:singleLine="false" />
+        <!--android:background="@color/semi_transparent"-->
+
+    </RelativeLayout>
+
+    <LinearLayout android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:padding="10.0dip"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/linearLayout_2">
+
+        <Button android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:id="@+id/button_colar"
+            android:textColor="@android:color/black"
+            android:layout_weight="1.0"
+            android:text="@string/colar"
+            android:layout_marginRight="4.0dip"
+            android:textStyle="bold"/>
+        <!--android:drawableLeft="@drawable/ic_copy_disabled"-->
+
+        <Button android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:id="@+id/button_apagar"
+            android:textColor="@android:color/black"
+            android:layout_weight="1.0"
+            android:text="@string/apagar"
+            android:textStyle="bold"
+            android:layout_marginLeft="4.0dip"/>
+    </LinearLayout>
+
+</RelativeLayout>
