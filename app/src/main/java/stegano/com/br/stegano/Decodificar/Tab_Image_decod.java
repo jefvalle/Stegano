@@ -19,12 +19,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.io.IOException;
 
+import stegano.com.br.stegano.Codificar.Senha;
 import stegano.com.br.stegano.R;
 
 /**
@@ -34,13 +35,18 @@ public class Tab_Image_decod extends Fragment{
 
     View rootView;
     private static int RESULT_LOAD_IMAGE = 1;
+
+    //private EditText editSenha;
+    private EditText editUsuario;
+    String senha = "";
+
     ProgressDialog dialogProgresso;
 
     private String selectedImagePath = "";
     AlertDialog.Builder dialogConcluido;
     private ImageView img;
     private String texto ;
-    private String saida = "";
+    private String saidaF = "";
 
     // caminho de saida
     String extStorageDirectory = null;
@@ -52,6 +58,7 @@ public class Tab_Image_decod extends Fragment{
     private Button bt_browse, bt_decod;
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     private String uploadImagePath = "";
+    private EditText editSenha;
 
     public static String myTexto;
 
@@ -60,14 +67,60 @@ public class Tab_Image_decod extends Fragment{
 
         rootView = inflater.inflate(R.layout.decodificar_imagem, null);
 
-        dialogConcluido = new AlertDialog.Builder(getActivity());
-        dialogConcluido.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        dialogProgresso = new ProgressDialog(getActivity());
+        dialogProgresso.setCancelable(false);
+        dialogProgresso.setTitle("Stegano");
+        dialogProgresso.setMessage("Decodificando ...");
+        dialogProgresso.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialogProgresso.setProgress(0);
+        dialogProgresso.setMax(100);
+        dialogProgresso.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                // TODO Auto-generated method stub
+                //exibirAlertDialog(senha);
 
+
+                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.senha, null);
+                builder.setView(dialogView);
+
+                builder.setTitle("Login");
+
+                editSenha = (EditText)dialogView.findViewById(R.id.textSenha);
+
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        if(editSenha.getText().toString().equals(senha)){
+                            Toast.makeText(getActivity(), "Senha correta",
+                                    Toast.LENGTH_SHORT).show();
+                            myTexto = saidaF;
+                        }
+                        else {
+                            Toast.makeText(getActivity(), "Senha incorreta",
+                                    Toast.LENGTH_SHORT).show();
+                            myTexto = "";
+
+                        }
+                    }
+                });
+                // Configura o botão de Cancelar
+                builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Fecha o AlertDialog
+                        //dismiss();
+                    }
+                });
+                builder.show();
             }
         });
-
-        dialogConcluido.setTitle("Stegano");
 
         img = (ImageView) rootView.findViewById(R.id.decodificar_imagem);
 
@@ -93,24 +146,38 @@ public class Tab_Image_decod extends Fragment{
                 if (uploadImagePath.isEmpty())
                     Toast.makeText(getActivity(), "Nenhuma Imagem Selecionada", Toast.LENGTH_SHORT).show();
                 else if (mExternalStorageAvailable) {
-                    try {
 
-                        ////////////////////////////////////
-                        saida = decodifica(uploadImagePath);
-                        ////////////////////////////////////
-                        myTexto = saida;
+                    dialogProgresso.show();
 
-                        Toast.makeText(getActivity(), "Sucesso", Toast.LENGTH_SHORT).show();
+                    Thread background = new Thread(new Runnable() {
+                        public void run() {
+                            try {
 
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                                ///////////////////////////////////
+                                decodifica(uploadImagePath);
+                                /////////////////////////////////
+
+                                try {
+                                    Thread.sleep(1);
+                                } catch (InterruptedException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
+                                // if something fails do something smart
+                            } catch (IOException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    background.start();
+
                 } else
                     Toast.makeText(getActivity(), "Não é Possível Acessar o Cartão SD", Toast.LENGTH_SHORT).show();
-
             }
         });
+
+
 
         return rootView;
     }
@@ -131,30 +198,6 @@ public class Tab_Image_decod extends Fragment{
         ImageView image = (ImageView) rootView.findViewById(R.id.decodificar_imagem);
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_CAMERA) {
-                File f = new File(Environment.getExternalStorageDirectory()
-                        .toString());
-                for (File temp : f.listFiles()) {
-                    if (temp.getName().equals("temp.jpg")) {
-                        f = temp;
-                        break;
-                    }
-                }
-                try {
-                    Bitmap bm;
-                    BitmapFactory.Options btmapOptions = new BitmapFactory.Options();
-
-                    bm = BitmapFactory.decodeFile(f.getAbsolutePath(), btmapOptions);
-
-                    //bm = Bitmap.createScaledBitmap(bm, 70, 70, true);
-
-                    image.setImageBitmap(bm);
-                    uploadImagePath = f.getAbsolutePath();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if (requestCode == SELECT_FILE) {
                 Uri selectedImageUri = data.getData();
 
                 String tempPath = getPath(selectedImageUri, getActivity());
@@ -163,14 +206,14 @@ public class Tab_Image_decod extends Fragment{
                 bm = BitmapFactory.decodeFile(tempPath, btmapOptions);
                 image.setImageBitmap(bm);
                 uploadImagePath = tempPath;
-            }
         }
     }
 
 
-    public String decodifica(String pathIma) throws IOException {
+    public int decodifica(String pathIma) throws IOException {
 
         String saida = "";
+        String teste = "";
         int inicial = 0;
         int largura = 0;
         int altura = 0;
@@ -192,23 +235,22 @@ public class Tab_Image_decod extends Fragment{
 
         if (ultimo != Color.rgb(0, 0, 0)) {
             dialogConcluido.setMessage("Imagem não possui mensagem");
-            dialogConcluido.show();
-            return "";
+            dialogProgresso.dismiss();
+            return 0;
         }
 
         //Procura pela mar�a��o na imagem
         for (int i=0;i<largura-1;i++){
             for (int j=0; j<altura-1;j++){
-                if (imagem.getPixel(i,j) == 0){
-                    Log.i(TAG, "Achou o zero: " + imagem.getPixel(i, j));
+                if (imagem.getPixel(i,j) == Color.rgb(0, 0, 0)){
+                    //Log.i(TAG, "Achou o zero: " + imagem.getPixel(i,j));
                     i = largura*altura;
                     j = largura*altura;
                 }
                 else{
                     inicial++;
-                    //Log.i(TAG, "TamVetor: " + inicial + "Pixel: "+ imagem.getPixel(i, j));
-                }
 
+                }
             }
         }
 
@@ -218,36 +260,35 @@ public class Tab_Image_decod extends Fragment{
 
         for (int i=0;i<largura-1;i++){
             for (int j=0; j<altura-1;j++){
-                if (imagem.getPixel(i,j) == 0){
-                    Log.i(TAG, "Achou o zero: " + imagem.getPixel(i, j));
+                if (imagem.getPixel(i,j) == Color.rgb(0, 0, 0)){
                     i = largura*altura;
                     j = largura*altura;
                 }
                 else{
                     pixels[inicial] = imagem.getPixel(i, j);
                     inicial++;
-                   // Log.i(TAG, "TamVetor: " + inicial + "Pixel: "+ imagem.getPixel(i, j));
                 }
 
             }
         }
         imagem.recycle();
 
+        for (inicial = 0; inicial < pixels.length-4;) {
 
-        inicial = 0;
-        saida = saida + RetiraCaracteres(pixels[inicial], pixels[inicial+1], pixels[inicial+2]);
-        inicial = 3;
-        for (int j = 4; j < pixels.length-3; j+=4) {
-            if (pixels[inicial]!=0 && pixels[inicial-1]!=0) {
-                saida = saida + RetiraCaracteres(pixels[inicial], pixels[inicial+1], pixels[inicial+2]);
-                inicial = inicial+3;
-            }
-            else
-                j = largura*altura;
+            saida = saida + RetiraCaracteres(pixels[inicial], pixels[inicial + 1], pixels[inicial + 2]) + "";
+
+            inicial = inicial + 3;
         }
 
-        return saida.substring(0,saida.length()-1);
-        //return saida;
+        senha = saida.substring(saida.lastIndexOf("#$")+2,saida.lastIndexOf("$#"));
+
+        saidaF = saida.substring(saida.lastIndexOf("$#")+2,saida.length()-1);
+
+        //myTexto = saida.substring(saida.lastIndexOf("$#")+2,saida.length()-1);
+
+        dialogProgresso.dismiss();
+
+        return 0;
     }
 
     /*****************************************************************************************/
@@ -318,5 +359,11 @@ public class Tab_Image_decod extends Fragment{
         Log.d("Ciclo", "Fragment: Metodo onPause() chamado");
         myTexto = "";
 
+    }
+
+    private void exibirAlertDialog(String sen){
+        Senha login = new Senha();
+        login.senha = sen;
+        login.show(getFragmentManager(), "login");
     }
 }
